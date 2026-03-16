@@ -39,9 +39,7 @@ class StoreLocation(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     __tablename__ = "store_locations"
 
-    store_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("stores.id"), nullable=False
-    )
+    store_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("stores.id"), nullable=False)
     address: Mapped[str] = mapped_column(String(300), nullable=False)
     city: Mapped[str] = mapped_column(String(100), nullable=False)
     state: Mapped[str] = mapped_column(String(2), nullable=False)

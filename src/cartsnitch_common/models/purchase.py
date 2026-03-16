@@ -5,7 +5,17 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import JSON, Date, DateTime, ForeignKey, Index, Numeric, String
+from sqlalchemy import (
+    JSON,
+    Date,
+    DateTime,
+    ForeignKey,
+    Index,
+    Numeric,
+    String,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from cartsnitch_common.models.base import Base, TimestampMixin, UUIDPrimaryKeyMixin
@@ -24,9 +34,7 @@ class Purchase(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     store_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("stores.id"), nullable=False)
-    store_location_id: Mapped[uuid.UUID | None] = mapped_column(
-        ForeignKey("store_locations.id")
-    )
+    store_location_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("store_locations.id"))
     receipt_id: Mapped[str] = mapped_column(String(200), nullable=False)
     purchase_date: Mapped[date] = mapped_column(Date, nullable=False)
     total: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
@@ -37,7 +45,7 @@ class Purchase(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     raw_data: Mapped[dict | None] = mapped_column(JSON)
     ingested_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        server_default=__import__("sqlalchemy").func.now(),
+        server_default=func.now(),
         nullable=False,
     )
 
@@ -49,17 +57,16 @@ class Purchase(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     __table_args__ = (
         Index("ix_purchases_user_store", "user_id", "store_id"),
+        UniqueConstraint("user_id", "store_id", "receipt_id", name="uq_purchase_receipt"),
     )
 
 
-class PurchaseItem(UUIDPrimaryKeyMixin, Base):
+class PurchaseItem(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Individual line item on a receipt."""
 
     __tablename__ = "purchase_items"
 
-    purchase_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("purchases.id"), nullable=False
-    )
+    purchase_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("purchases.id"), nullable=False)
     product_name_raw: Mapped[str] = mapped_column(String(300), nullable=False)
     upc: Mapped[str | None] = mapped_column(String(20))
     quantity: Mapped[Decimal] = mapped_column(Numeric(10, 3), nullable=False, default=1)

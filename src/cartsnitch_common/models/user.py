@@ -33,12 +33,12 @@ class UserStoreAccount(UUIDPrimaryKeyMixin, TimestampMixin, Base):
     """Link between a user and their retailer account credentials."""
 
     __tablename__ = "user_store_accounts"
-    __table_args__ = (
-        UniqueConstraint("user_id", "store_id", name="uq_user_store_account"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", "store_id", name="uq_user_store_account"),)
 
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     store_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("stores.id"), nullable=False)
+    # WARNING: Contains retailer session cookies/tokens. Encryption-at-rest
+    # required before production deployment (e.g., pgcrypto or app-level encryption).
     session_data: Mapped[dict | None] = mapped_column(JSON)
     session_expires_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     last_sync_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))

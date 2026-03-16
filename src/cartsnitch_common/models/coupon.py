@@ -21,9 +21,7 @@ class Coupon(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     __tablename__ = "coupons"
 
-    store_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("stores.id"), nullable=False
-    )
+    store_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("stores.id"), nullable=False)
     normalized_product_id: Mapped[uuid.UUID | None] = mapped_column(
         ForeignKey("normalized_products.id")
     )
@@ -41,6 +39,4 @@ class Coupon(UUIDPrimaryKeyMixin, TimestampMixin, Base):
 
     # Relationships
     store: Mapped["Store"] = relationship(back_populates="coupons")
-    normalized_product: Mapped["NormalizedProduct | None"] = relationship(
-        back_populates="coupons"
-    )
+    normalized_product: Mapped["NormalizedProduct | None"] = relationship(back_populates="coupons")

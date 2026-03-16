@@ -32,10 +32,25 @@ class MatchResult:
 
 
 # Noise words stripped during name cleaning
-_NOISE_WORDS = frozenset({
-    "the", "a", "an", "and", "or", "of", "with", "in", "for", "to",
-    "brand", "original", "classic", "new", "improved",
-})
+_NOISE_WORDS = frozenset(
+    {
+        "the",
+        "a",
+        "an",
+        "and",
+        "or",
+        "of",
+        "with",
+        "in",
+        "for",
+        "to",
+        "brand",
+        "original",
+        "classic",
+        "new",
+        "improved",
+    }
+)
 
 # Regex for extracting size info (e.g., "16 oz", "1.5 lb", "12 ct")
 _SIZE_PATTERN = re.compile(
@@ -85,9 +100,10 @@ def match_by_upc(session: Session, upc: str) -> MatchResult | None:
     Loads products with upc_variants and checks membership in Python
     for cross-database compatibility (works on both PostgreSQL and SQLite).
     """
-    stmt = select(NormalizedProduct).where(
-        NormalizedProduct.upc_variants.is_not(None)
-    )
+    # TODO: Use PostgreSQL JSON containment query (@>) for production.
+    # Current approach loads all products into memory — acceptable for tests
+    # and small datasets, but will not scale.
+    stmt = select(NormalizedProduct).where(NormalizedProduct.upc_variants.is_not(None))
     products = session.execute(stmt).scalars().all()
     for product in products:
         if product.upc_variants and upc in product.upc_variants:
@@ -105,6 +121,9 @@ def match_by_name(
     Loads all normalized products and computes Jaccard similarity.
     Returns the best match above the threshold, or None.
     """
+    # TODO: Use pg_trgm similarity index for production.
+    # Current approach loads all products into memory — acceptable for tests
+    # and small datasets, but will not scale.
     cleaned = clean_name(name)
     stmt = select(NormalizedProduct)
     products = session.execute(stmt).scalars().all()
@@ -119,9 +138,7 @@ def match_by_name(
             best_match = product
 
     if best_match:
-        return MatchResult(
-            product=best_match, confidence=best_score, method=MatchMethod.NAME
-        )
+        return MatchResult(product=best_match, confidence=best_score, method=MatchMethod.NAME)
     return None
 
 
