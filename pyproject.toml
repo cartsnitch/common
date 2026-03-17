@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "cartsnitch-common"
-version = "0.2.0"
+version = "0.3.0"
 description = "Shared models, schemas, and utilities for CartSnitch services"
 requires-python = ">=3.12"
 dependencies = [

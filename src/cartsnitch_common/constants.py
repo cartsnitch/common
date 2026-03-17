@@ -63,6 +63,14 @@ class ProductCategory(StrEnum):
     OTHER = "other"
 
 
+class MatchConfidence(StrEnum):
+    """Confidence level for product matching."""
+
+    HIGH = "high"
+    MEDIUM = "medium"
+    LOW = "low"
+
+
 class SizeUnit(StrEnum):
     """Standardized product size units."""
 
