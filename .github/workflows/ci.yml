@@ -59,6 +59,7 @@ jobs:
           --health-retries 5
     env:
       DATABASE_URL: postgresql://cartsnitch:cartsnitch_test@localhost:5432/cartsnitch_test
+      CARTSNITCH_DATABASE_URL_SYNC: postgresql://cartsnitch:cartsnitch_test@localhost:5432/cartsnitch_test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
