@@ -1,7 +1,7 @@
 """Event bus helpers for Redis pub/sub."""
 
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, cast
 
 from redis import Redis
 
@@ -25,5 +25,4 @@ def publish_event(
         service=service,
         payload=payload,
     )
-    result = redis_client.publish(event_type.value, envelope.model_dump_json())
-    return int(result)
+    return cast(int, redis_client.publish(event_type.value, envelope.model_dump_json()))
