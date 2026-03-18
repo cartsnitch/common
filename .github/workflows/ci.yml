@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   lint:
-    runs-on: local-ubuntu-latest
+    runs-on: local-ubuntu-latest-cartsnitch
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -29,7 +29,7 @@ jobs:
         run: ruff format --check .
 
   typecheck:
-    runs-on: local-ubuntu-latest
+    runs-on: local-ubuntu-latest-cartsnitch
     continue-on-error: true
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,7 @@ jobs:
         run: mypy src/cartsnitch_common
 
   test:
-    runs-on: local-ubuntu-latest
+    runs-on: local-ubuntu-latest-cartsnitch
     services:
       postgres:
         image: postgres:15-alpine
@@ -72,7 +72,7 @@ jobs:
         run: pytest --tb=short -q
 
   build:
-    runs-on: local-ubuntu-latest
+    runs-on: local-ubuntu-latest-cartsnitch
     needs: [lint, test]
     steps:
       - uses: actions/checkout@v4
