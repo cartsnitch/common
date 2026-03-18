@@ -187,7 +187,10 @@ class TestDetectShrinkflation:
         # Small decrease (< 5%) → 0.70
         product1 = self._make_product(session, "100", SizeUnit.G, "Product A")
         event1 = detect_shrinkflation(
-            session, product=product1, new_size="97", new_unit=SizeUnit.G,
+            session,
+            product=product1,
+            new_size="97",
+            new_unit=SizeUnit.G,
             detected_date=date(2026, 3, 15),
         )
         assert event1 is not None
@@ -196,7 +199,10 @@ class TestDetectShrinkflation:
         # Medium decrease (5-10%) → 0.85
         product2 = self._make_product(session, "100", SizeUnit.G, "Product B")
         event2 = detect_shrinkflation(
-            session, product=product2, new_size="93", new_unit=SizeUnit.G,
+            session,
+            product=product2,
+            new_size="93",
+            new_unit=SizeUnit.G,
             detected_date=date(2026, 3, 15),
         )
         assert event2 is not None
@@ -205,7 +211,10 @@ class TestDetectShrinkflation:
         # Large decrease (>= 10%) → 0.95
         product3 = self._make_product(session, "100", SizeUnit.G, "Product C")
         event3 = detect_shrinkflation(
-            session, product=product3, new_size="85", new_unit=SizeUnit.G,
+            session,
+            product=product3,
+            new_size="85",
+            new_unit=SizeUnit.G,
             detected_date=date(2026, 3, 15),
         )
         assert event3 is not None

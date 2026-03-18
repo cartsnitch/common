@@ -156,8 +156,7 @@ def detect_shrinkflation(
         price_at_new_size=new_price,
         confidence=confidence,
         notes=(
-            f"Size decreased {size_change_pct}%"
-            f" ({product.size} {old_unit} → {new_size} {new_unit})"
+            f"Size decreased {size_change_pct}% ({product.size} {old_unit} → {new_size} {new_unit})"
         ),
     )
     session.add(event)

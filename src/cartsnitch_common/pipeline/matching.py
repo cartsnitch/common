@@ -82,7 +82,8 @@ class ProductMatcher:
         self.auto_create = auto_create
 
     def match_single(
-        self, item: PurchaseItemCreate,
+        self,
+        item: PurchaseItemCreate,
     ) -> tuple[NormalizedProduct | None, MatchResult | None, MatchConfidence]:
         """Match a single purchase item to a normalized product.
 
