@@ -25,4 +25,5 @@ def publish_event(
         service=service,
         payload=payload,
     )
-    return redis_client.publish(event_type.value, envelope.model_dump_json())
+    result = redis_client.publish(event_type.value, envelope.model_dump_json())
+    return int(result)
