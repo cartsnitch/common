@@ -21,7 +21,8 @@ def _clean_product_name(raw: str) -> str:
 
 
 def _safe_decimal(
-    value: str | float | int | Decimal | None, default: Decimal = Decimal("0"),
+    value: str | float | int | Decimal | None,
+    default: Decimal = Decimal("0"),
 ) -> Decimal:
     """Safely convert a value to Decimal."""
     if value is None:
