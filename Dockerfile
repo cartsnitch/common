@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM ghcr.io/cartsnitch/mirror/python:3.12-slim AS base
+FROM python:3.12-slim AS base
 
 WORKDIR /app
 

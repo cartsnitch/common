@@ -12,7 +12,6 @@ concurrency:
 
 permissions:
   contents: read
-  packages: read
 
 jobs:
   lint:
@@ -46,10 +45,7 @@ jobs:
     runs-on: local-ubuntu-latest-cartsnitch
     services:
       postgres:
-        image: ghcr.io/cartsnitch/mirror/postgres:15-alpine
-        credentials:
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+        image: postgres:15-alpine
         env:
           POSTGRES_USER: cartsnitch
           POSTGRES_PASSWORD: cartsnitch_test
