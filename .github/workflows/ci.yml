@@ -46,9 +46,6 @@ jobs:
     services:
       postgres:
         image: postgres:15-alpine
-        credentials:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
         env:
           POSTGRES_USER: cartsnitch
           POSTGRES_PASSWORD: cartsnitch_test
@@ -64,11 +61,6 @@ jobs:
       DATABASE_URL: postgresql://cartsnitch:cartsnitch_test@localhost:5432/cartsnitch_test
       CARTSNITCH_DATABASE_URL_SYNC: postgresql://cartsnitch:cartsnitch_test@localhost:5432/cartsnitch_test
     steps:
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
