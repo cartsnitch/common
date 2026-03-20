@@ -242,9 +242,7 @@ class TestFullPipelineE2E:
         assert pasta.extended_price == Decimal("3.38")
         assert pasta.coupon_discount == Decimal("0.40")
 
-    def test_upc_product_matching_and_storage(
-        self, e2e_session: Session, user: User, store: Store
-    ):
+    def test_upc_product_matching_and_storage(self, e2e_session: Session, user: User, store: Store):
         """Full flow: normalize → match → store in DB. UPC matching works E2E."""
         purchase_schema = normalize_receipt(
             MEIJER_RECEIPT_FIXTURE,
@@ -304,9 +302,13 @@ class TestFullPipelineE2E:
         assert stored_purchase.user_id == user.id
         assert stored_purchase.store_id == store.id
 
-        stored_items = e2e_session.execute(
-            select(PurchaseItem).where(PurchaseItem.purchase_id == stored_purchase.id)
-        ).scalars().all()
+        stored_items = (
+            e2e_session.execute(
+                select(PurchaseItem).where(PurchaseItem.purchase_id == stored_purchase.id)
+            )
+            .scalars()
+            .all()
+        )
         assert len(stored_items) == 5
 
         # Verify products were created in normalized_products table
@@ -369,9 +371,7 @@ class TestPriceTrackingE2E:
         # Record prices for each matched item
         price_entries = []
         for i, item_schema in enumerate(purchase_schema.items):
-            product = (
-                outcomes[i].match.product if outcomes[i].match else None
-            )
+            product = outcomes[i].match.product if outcomes[i].match else None
             if product is None:
                 # Was auto-created — find the product directly
                 products = e2e_session.execute(select(NormalizedProduct)).scalars().all()
@@ -473,9 +473,7 @@ class TestPriceTrackingE2E:
         assert pasta_delta.change_amount == Decimal("0.10")
         assert pasta_delta.is_increase is True
 
-    def test_price_trend_across_visits(
-        self, e2e_session: Session, user: User, store: Store
-    ):
+    def test_price_trend_across_visits(self, e2e_session: Session, user: User, store: Store):
         """get_price_trend returns ordered history after multiple ingestions."""
         # Create a product manually
         product = NormalizedProduct(
@@ -591,12 +589,8 @@ class TestShrinkflationE2E:
         e2e_session.add(product)
         e2e_session.flush()
 
-        first = detect_shrinkflation(
-            e2e_session, product, new_size="13.5", new_unit=SizeUnit.OZ
-        )
-        second = detect_shrinkflation(
-            e2e_session, product, new_size="13.5", new_unit=SizeUnit.OZ
-        )
+        first = detect_shrinkflation(e2e_session, product, new_size="13.5", new_unit=SizeUnit.OZ)
+        second = detect_shrinkflation(e2e_session, product, new_size="13.5", new_unit=SizeUnit.OZ)
 
         assert first is not None
         assert second is not None
@@ -607,7 +601,9 @@ class TestShrinkflationE2E:
                 select(ShrinkflationEvent).where(
                     ShrinkflationEvent.normalized_product_id == product.id
                 )
-            ).scalars().all()
+            )
+            .scalars()
+            .all()
         )
         assert count == 1
 
@@ -828,11 +824,13 @@ class TestMalformedScraperOutput:
 
     def test_non_numeric_price_defaults_to_zero(self):
         """Non-numeric price strings safely default to zero."""
-        item = parse_meijer_item({
-            "description": "Bad Price Item",
-            "unitPrice": "not_a_number",
-            "extendedPrice": "$$$.xx",
-        })
+        item = parse_meijer_item(
+            {
+                "description": "Bad Price Item",
+                "unitPrice": "not_a_number",
+                "extendedPrice": "$$$.xx",
+            }
+        )
         assert item.unit_price == Decimal("0")
         assert item.extended_price == Decimal("0")
 
@@ -861,31 +859,37 @@ class TestMalformedScraperOutput:
 
     def test_item_with_garbage_upc_preserves_it(self):
         """UPC field with non-standard content is preserved as-is after strip."""
-        item = parse_meijer_item({
-            "description": "Weird UPC Product",
-            "upc": "  ABC-NOT-A-UPC  ",
-            "unitPrice": "1.99",
-        })
+        item = parse_meijer_item(
+            {
+                "description": "Weird UPC Product",
+                "upc": "  ABC-NOT-A-UPC  ",
+                "unitPrice": "1.99",
+            }
+        )
         # lstrip("0") on "ABC-NOT-A-UPC" leaves it intact
         assert item.upc == "ABC-NOT-A-UPC"
 
     def test_negative_prices_pass_through(self):
         """Negative prices (refunds) are preserved, not zeroed."""
-        item = parse_meijer_item({
-            "description": "Refund Item",
-            "unitPrice": "-5.99",
-            "extendedPrice": "-5.99",
-        })
+        item = parse_meijer_item(
+            {
+                "description": "Refund Item",
+                "unitPrice": "-5.99",
+                "extendedPrice": "-5.99",
+            }
+        )
         assert item.unit_price == Decimal("-5.99")
         assert item.extended_price == Decimal("-5.99")
 
     def test_extended_price_auto_calculated(self):
         """When extendedPrice is missing, it's calculated from unitPrice * quantity."""
-        item = parse_meijer_item({
-            "description": "No Extended",
-            "unitPrice": "2.50",
-            "quantity": "3",
-        })
+        item = parse_meijer_item(
+            {
+                "description": "No Extended",
+                "unitPrice": "2.50",
+                "quantity": "3",
+            }
+        )
         assert item.extended_price == Decimal("7.50")
 
     def test_matching_with_malformed_items(self, e2e_session: Session):
