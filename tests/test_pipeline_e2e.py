@@ -6,7 +6,6 @@ Tests the full flow: scraper output → normalization → product matching → D
 Uses real test fixtures with an in-memory SQLite database, not mocks.
 """
 
-import json
 import uuid
 from datetime import date
 from decimal import Decimal
@@ -18,8 +17,6 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from cartsnitch_common.constants import (
     EventType,
-    MatchConfidence,
-    PriceSource,
     SizeUnit,
     StoreSlug,
 )
@@ -37,7 +34,6 @@ from cartsnitch_common.models import (
 from cartsnitch_common.pipeline.matching import ProductMatcher
 from cartsnitch_common.pipeline.price_tracking import (
     PriceDelta,
-    get_latest_price,
     get_price_trend,
     record_price_from_item,
 )
@@ -282,7 +278,7 @@ class TestFullPipelineE2E:
         e2e_session.flush()
 
         # Store items linked to the purchase and matched products
-        for i, item_schema in enumerate(purchase_schema.items):
+        for _i, item_schema in enumerate(purchase_schema.items):
             item_db = PurchaseItem(
                 id=uuid.uuid4(),
                 purchase_id=purchase_db.id,
@@ -328,7 +324,7 @@ class TestFullPipelineE2E:
             store_id=str(store.id),
         )
         matcher = ProductMatcher(e2e_session, auto_create=True)
-        first_outcomes = matcher.match_items(first.items)
+        matcher.match_items(first.items)
 
         products_after_first = e2e_session.execute(select(NormalizedProduct)).scalars().all()
         first_count = len(products_after_first)
