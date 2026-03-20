@@ -46,6 +46,9 @@ jobs:
     services:
       postgres:
         image: postgres:15-alpine
+        credentials:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
         env:
           POSTGRES_USER: cartsnitch
           POSTGRES_PASSWORD: cartsnitch_test
