@@ -197,7 +197,7 @@ async def run_stat_2(session: AsyncSession, freq: int) -> None:
     print(f"  Announced value:                   ${announced:,.2f}")
     print(f"  Status:                            {status}")
 
-    print(f"\n  Sensitivity (same data, different frequency assumptions):")
+    print("\n  Sensitivity (same data, different frequency assumptions):")
     for alt_freq in (13, 20, 26, 40, 52):
         alt = float(avg_save) * int(eligible) * alt_freq
         marker = " ← default" if alt_freq == freq else ""
@@ -239,7 +239,10 @@ async def main(stat: int | None, freq: int) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description=__doc__,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
     parser.add_argument(
         "--stat",
         type=int,
@@ -251,7 +254,10 @@ if __name__ == "__main__":
         "--freq",
         type=int,
         default=DEFAULT_PURCHASE_FREQUENCY_PER_YEAR,
-        help=f"Purchase frequency per product per year (default: {DEFAULT_PURCHASE_FREQUENCY_PER_YEAR})",
+        help=(
+            "Purchase frequency per product per year "
+            f"(default: {DEFAULT_PURCHASE_FREQUENCY_PER_YEAR})"
+        ),
     )
     args = parser.parse_args()
     asyncio.run(main(stat=args.stat, freq=args.freq))
