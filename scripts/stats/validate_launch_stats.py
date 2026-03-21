@@ -99,6 +99,7 @@ async def run_stat_1(session: AsyncSession) -> None:
 # Stat 2: annual savings potential
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def savings_summary_sql(freq: int, lookback_days: int, min_stores: int) -> sa.TextClause:
     """Build the savings summary query with runtime parameters."""
     return sa.text(f"""
@@ -171,8 +172,10 @@ async def run_stat_2(session: AsyncSession, freq: int) -> None:
     """Validate: $336/year potential savings from cross-store price comparison."""
     print("\n" + "=" * 70)
     print("STAT 2: Annual savings potential from buying at cheapest store")
-    print(f"Assumptions: purchase freq={freq}x/year, price lookback={PRICE_LOOKBACK_DAYS}d, "
-          f"min_stores={MIN_STORES_FOR_COMPARISON}")
+    print(
+        f"Assumptions: purchase freq={freq}x/year, price lookback={PRICE_LOOKBACK_DAYS}d, "
+        f"min_stores={MIN_STORES_FOR_COMPARISON}"
+    )
     print("Expected: ~$336/year")
     print("=" * 70)
 
@@ -208,7 +211,7 @@ async def run_stat_2(session: AsyncSession, freq: int) -> None:
         savings_top_products_sql(freq, PRICE_LOOKBACK_DAYS, MIN_STORES_FOR_COMPARISON)
     )
     print(f"  {'Product':<40s}  {'Brand':<20s}  {'Save/Buy':>8}  {'Annual':>8}")
-    print(f"  {'-'*40}  {'-'*20}  {'-'*8}  {'-'*8}")
+    print(f"  {'-' * 40}  {'-' * 20}  {'-' * 8}  {'-' * 8}")
     for r in top_result.fetchall():
         name = (r[0] or "")[:39]
         brand = (r[1] or "")[:19]
@@ -218,6 +221,7 @@ async def run_stat_2(session: AsyncSession, freq: int) -> None:
 # ──────────────────────────────────────────────────────────────────────────────
 # Entry point
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 async def main(stat: int | None, freq: int) -> None:
     db_url = os.getenv("DATABASE_URL")
