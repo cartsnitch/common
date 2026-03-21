@@ -48,8 +48,8 @@ def _base_price_for_product(product: dict) -> float:
         ProductCategory.HOUSEHOLD: (3.99, 19.99),
         ProductCategory.PERSONAL_CARE: (3.99, 14.99),
     }
-    cat = product.get("category")
-    lo, hi = category_ranges.get(cat, (1.99, 9.99))
+    cat: ProductCategory | None = product.get("category")
+    lo, hi = category_ranges.get(cat, (1.99, 9.99)) if cat is not None else (1.99, 9.99)
     return random.uniform(lo, hi)
 
 

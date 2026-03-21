@@ -102,7 +102,7 @@ def generate_purchase_items(
 ) -> list[dict]:
     """Return ~NUM_PURCHASE_ITEMS purchase item records distributed across purchases."""
     now = datetime.now(tz=UTC)
-    items = []
+    items: list[dict] = []
     total_target = NUM_PURCHASE_ITEMS
     num_purchases = len(purchases)
 
